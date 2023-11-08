@@ -41,11 +41,51 @@ const resultsDisplay = document.getElementById('resultsDisplay');
 
 // Array to track displayed products
 let displayedProducts = [];
+// Function to create and display the bar chart
+function createBarChart() {
+    if (areVotingRoundsCompleted()) {
+        const voteData = products.map(product => product.timesClicked);
+        const viewData = products.map(product => product.timesShown);
+        const productNames = products.map(product => product.name);
 
+        const ctx = document.getElementById('resultsChart').getContext('2d');
+        console.log(ctx);
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: productNames,
+                datasets: [
+                    {
+                        label: 'Votes',
+                        data: voteData,
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Views',
+                        data: viewData,
+                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        borderWidth: 1
+                    }
+                ]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    }
+
+}
 // Display Unique Products
 function displayProducts() {
     if (currentRound >= rounds) {
-        productContainer.removeEventListener('click',e => handleProductClick(e));
+        productContainer.removeEventListener('click', e => handleProductClick(e));
         viewResultsButton.style.display = 'block';
         return;
     }
@@ -74,16 +114,16 @@ function displayProducts() {
 function getUniqueProducts(count) {
     const uniqueProducts = [];
     const availableProducts = products.slice(); // Create a copy of the products array to work with
-    
+
     while (uniqueProducts.length < count && availableProducts.length > 0) {
         const randomIndex = Math.floor(Math.random() * availableProducts.length);
         const randomProduct = availableProducts.splice(randomIndex, 1)[0];
-        
+
         if (!displayedProducts.includes(randomProduct)) {
             uniqueProducts.push(randomProduct);
         }
     }
-    
+
     return uniqueProducts;
 }
 // Handle Product Click
@@ -96,7 +136,6 @@ function handleProductClick(event) {
             product.timesClicked++;
             displayProducts();
         }
-
         if (currentRound >= rounds) {
             viewResultsButton.style.display = 'block';
         }
@@ -107,10 +146,16 @@ function handleProductClick(event) {
 productContainer.addEventListener('click', e => handleProductClick(e));
 
 
+
+// Check if all rounds have been completed
+function areVotingRoundsCompleted() {
+    return currentRound >= rounds;
+}
+
 // Event Listener for Viewing Results
 viewResultsButton.addEventListener('click', (e) => {
     e.preventDefault();
-    resultsDisplay.innerHTML = '';
+    createBarChart();
     const resultList = document.createElement('ul');
     resultList.className = 'results-list';
 
