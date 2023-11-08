@@ -8,6 +8,7 @@ function Product(name, imagePath) {
     this.timesClicked = 0;
 }
 
+
 // Create an array of product objects
 const products = [
     new Product('Product 1', 'img/bag.jpg'),
@@ -30,6 +31,15 @@ const products = [
     new Product('Product 18', 'img/water-can.jpg'),
     new Product('Product 19', 'img/wine-glass.jpg')
 ];
+
+localStorage.setItem('products', JSON.stringify(products));
+
+// Retrieve the JSON string from local storage
+const storedProducts = localStorage.getItem('products');
+
+// Parse the JSON string back to an array
+const parsedProducts = JSON.parse(storedProducts);
+
 // Voting Configuration
 let rounds = 25; // Number of voting rounds
 let currentRound = 0;
@@ -44,9 +54,9 @@ let displayedProducts = [];
 // Function to create and display the bar chart
 function createBarChart() {
     if (areVotingRoundsCompleted()) {
-        const voteData = products.map(product => product.timesClicked);
-        const viewData = products.map(product => product.timesShown);
-        const productNames = products.map(product => product.name);
+        const voteData = parsedProducts.map(product => product.timesClicked);
+        const viewData = parsedProducts.map(product => product.timesShown);
+        const productNames = parsedProducts.map(product => product.name);
 
         const ctx = document.getElementById('resultsChart').getContext('2d');
         console.log(ctx);
@@ -90,7 +100,7 @@ function displayProducts() {
         return;
     }
 
-    if (displayedProducts.length === products.length) {
+    if (displayedProducts.length === parsedProducts.length) {
         displayedProducts = [];
     }
 
@@ -113,7 +123,7 @@ function displayProducts() {
 // Get Three Random Unique Products
 function getUniqueProducts(count) {
     const uniqueProducts = [];
-    const availableProducts = products.slice(); // Create a copy of the products array to work with
+    const availableProducts = parsedProducts.slice(); // Create a copy of the products array to work with
 
     while (uniqueProducts.length < count && availableProducts.length > 0) {
         const randomIndex = Math.floor(Math.random() * availableProducts.length);
@@ -131,7 +141,7 @@ function handleProductClick(event) {
     event.preventDefault();
     if (event.target.tagName === 'IMG') {
         const productName = event.target.alt;
-        const product = products.find(p => p.name === productName);
+        const product = parsedProducts.find(p => p.name === productName);
         if (product) {
             product.timesClicked++;
             displayProducts();
@@ -145,8 +155,6 @@ function handleProductClick(event) {
 // Event Listener for Product Click
 productContainer.addEventListener('click', e => handleProductClick(e));
 
-
-
 // Check if all rounds have been completed
 function areVotingRoundsCompleted() {
     return currentRound >= rounds;
@@ -159,7 +167,7 @@ viewResultsButton.addEventListener('click', (e) => {
     const resultList = document.createElement('ul');
     resultList.className = 'results-list';
 
-    for (const product of products) {
+    for (const product of parsedProducts) {
         const listItem = document.createElement('li');
         listItem.textContent = `${product.name} had ${product.timesClicked} votes and was seen ${product.timesShown} times.`;
         resultList.appendChild(listItem);
