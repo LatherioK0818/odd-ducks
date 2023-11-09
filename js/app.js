@@ -11,27 +11,27 @@ function Product(name, imagePath) {
 
 // Create an array of product objects
 const products = [
-    new Product('Product 1', 'img/bag.jpg'),
-    new Product('Product 2', 'img/banana.jpg'),
-    new Product('Product 3', 'img/bathroom.jpg'),
-    new Product('Product 4', 'img/boots.jpg'),
-    new Product('Product 5', 'img/breakfast.jpg'),
-    new Product('Product 6', 'img/bubblegum.jpg'),
-    new Product('Product 7', 'img/chair.jpg'),
-    new Product('Product 8', 'img/cthulhu.jpg'),
-    new Product('Product 9', 'img/dog-duck.jpg'),
-    new Product('Product 10', 'img/dragon.jpg'),
-    new Product('Product 11', 'img/pen.jpg'),
-    new Product('Product 12', 'img/pet-sweep.jpg'),
-    new Product('Product 13', 'img/scissors.jpg'),
-    new Product('Product 14', 'img/shark.jpg'),
-    new Product('Product 15', 'img/sweep.png'),
-    new Product('Product 16', 'img/tauntaun.jpg'),
-    new Product('Product 17', 'img/unicorn.jpg'),
-    new Product('Product 18', 'img/water-can.jpg'),
-    new Product('Product 19', 'img/wine-glass.jpg')
+    new Product('bag', 'img/bag.jpg'),
+    new Product('banana', 'img/banana.jpg'),
+    new Product('bathroom', 'img/bathroom.jpg'),
+    new Product('boots', 'img/boots.jpg'),
+    new Product('breakfast', 'img/breakfast.jpg'),
+    new Product('bubblegum', 'img/bubblegum.jpg'),
+    new Product('chair', 'img/chair.jpg'),
+    new Product('cthulhu', 'img/cthulhu.jpg'),
+    new Product('dog-duck', 'img/dog-duck.jpg'),
+    new Product('dragon', 'img/dragon.jpg'),
+    new Product('pen', 'img/pen.jpg'),
+    new Product('pet-sweep', 'img/pet-sweep.jpg'),
+    new Product('scissors', 'img/scissors.jpg'),
+    new Product('shark', 'img/shark.jpg'),
+    new Product('sweep', 'img/sweep.png'),
+    new Product('tauntaun', 'img/tauntaun.jpg'),
+    new Product('unicorn', 'img/unicorn.jpg'),
+    new Product('water-can', 'img/water-can.jpg'),
+    new Product('wine-glass', 'img/wine-glass.jpg')
 ];
-
+//s
 localStorage.setItem('products', JSON.stringify(products));
 
 // Retrieve the JSON string from local storage
@@ -43,7 +43,8 @@ const parsedProducts = JSON.parse(storedProducts);
 // Voting Configuration
 let rounds = 25; // Number of voting rounds
 let currentRound = 0;
-
+let previousProducts = [];
+let allProductsShown = false;
 // DOM Elements
 const productContainer = document.querySelector('.image-container');
 const viewResultsButton = document.getElementById('showResults');
@@ -92,7 +93,8 @@ function createBarChart() {
     }
 
 }
-// Display Unique Products
+
+// Display Products Function
 function displayProducts() {
     if (currentRound >= rounds) {
         productContainer.removeEventListener('click', e => handleProductClick(e));
@@ -100,28 +102,45 @@ function displayProducts() {
         return;
     }
 
-    if (displayedProducts.length === parsedProducts.length) {
-        displayedProducts = [];
+    if (!allProductsShown) {
+        const uniqueProducts = getUniqueProducts(3, displayedProducts);
+
+        productContainer.innerHTML = '';
+
+        for (const product of uniqueProducts) {
+            const productImage = document.createElement('img');
+            productImage.src = product.imagePath;
+            productImage.alt = product.name;
+            productContainer.appendChild(productImage);
+            product.timesShown++;
+            displayedProducts.push(product);
+        }
+
+        currentRound++;
+
+        if (currentRound >= rounds) {
+            allProductsShown = true;
+        }
     }
-
-    const uniqueProducts = getUniqueProducts(3);
-
-    productContainer.innerHTML = '';
-
-    for (const product of uniqueProducts) {
-        const productImage = document.createElement('img');
-        productImage.src = product.imagePath;
-        productImage.alt = product.name;
-        productContainer.appendChild(productImage);
-        product.timesShown++;
-        displayedProducts.push(product);
-    }
-
-    currentRound++;
 }
 
+function getUniqueProducts(count, previousProducts) {
+    const uniqueProducts = [];
+    const availableProducts = parsedProducts.slice();
+
+    while (uniqueProducts.length < count && availableProducts.length > 0) {
+        const randomIndex = Math.floor(Math.random() * availableProducts.length);
+        const randomProduct = availableProducts.splice(randomIndex, 1)[0];
+
+        if (!displayedProducts.includes(randomProduct) && !previousProducts.includes(randomProduct)) {
+            uniqueProducts.push(randomProduct);
+        }
+    }
+
+    return uniqueProducts;
+}
 // Get Three Random Unique Products
-function getUniqueProducts(count) {
+function getUniqueProducts(count,previousProducts) {
     const uniqueProducts = [];
     const availableProducts = parsedProducts.slice(); // Create a copy of the products array to work with
 
@@ -129,11 +148,11 @@ function getUniqueProducts(count) {
         const randomIndex = Math.floor(Math.random() * availableProducts.length);
         const randomProduct = availableProducts.splice(randomIndex, 1)[0];
 
-        if (!displayedProducts.includes(randomProduct)) {
+        if (!displayedProducts.includes(randomProduct && !previousProducts.includes(randomProduct))) {
             uniqueProducts.push(randomProduct);
         }
+    
     }
-
     return uniqueProducts;
 }
 // Handle Product Click
@@ -176,7 +195,6 @@ viewResultsButton.addEventListener('click', (e) => {
     resultsDisplay.appendChild(resultList);
     viewResultsButton.style.display = 'none';
 });
-
 
 // Initial Display of Products
 displayProducts();
