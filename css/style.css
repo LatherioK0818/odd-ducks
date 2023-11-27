@@ -1,14 +1,15 @@
 /* Header styles */
 header {
-    background-color: #8B4513;
+    background: #000000;
     padding: 48px;
-    color: #FFD700;
+    color: #ffae00;
     display: grid;
     justify-content: center;
     font-family: 'Georgia', serif;
     font-size: 48px;
     background-size: cover;
     background-position: center;
+    animation: ;
 }
 .container {
     display: grid;
@@ -19,44 +20,35 @@ header {
         "duck-info"
         "image-container"
         "results";
+        background: #ccc3bc;
 }
 .image-container {
     grid-area: image-container;
     display: grid;
-    justify-content: space-around; /* Center the images and provide space around them */
+    justify-content: space-between; /* Center the images and provide space around them */
     align-items: center;
-    padding: 20px;
+    padding: 100px;
     background-color: rgba(255, 255, 255, 0.8);
-    border: 4px solid #FF5733;
+    border: 4px solid #337aff;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    animation: pulse 5s infinite;
 }
+
+
+
 .results {
     grid-area: results;
     text-align: center;
-    border: 4px solid #81ff33;
+    border: 4px solid #338fff;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
 
 }
 
 .duck-info {
     grid-area: duck-info;
-    background-color: rgba(255, 255, 255, 0.8);
+    background-color: rgba(255, 123, 0, 0.986);
     padding: 10px;
-    justify-content: center;
-}
-/* Button background for showing results */
-#showResults {
-    background-color: #ff7033;
-    color: white;
-    padding: 15px;
-    border-radius: 12px;
-    
-}
-/* Background color for the report section */
-#report {
-    background-color: #8B0000;
-    color: white;
-    padding: 10px;
+    justify-content: space-around;
 }
 .image-container {
     grid-area: image-container;
@@ -73,3 +65,23 @@ header {
     border: 4px solid #ffc533;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
 }
+.hidden{
+    display: none;
+}
+
+/* Button background for showing results */
+#showResults {
+    background-color: #e9b8a3;
+    color: white;
+    padding: 15px;
+    border-radius: 12px;
+    
+}
+/* Background color for the report section */
+#report {
+    background-color: #d95050;
+    color: white;
+    padding: 10px;
+
+}
+
